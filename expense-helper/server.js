@@ -5,6 +5,7 @@ const fs = require("fs");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const store = require("./store");
 const guide = require("./guide");
+const claimsData = require("./claims");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -22,6 +23,33 @@ app.use(express.json({ limit: "6mb" }));
 app.use(express.static(path.join(__dirname, "public")));
 // Serve uploaded preset/participant images
 app.use("/files", express.static(store.UPLOAD_DIR));
+
+// Current experiment config for the participant page
+app.get("/api/current", function (_req, res) {
+  var s = store.loadSettings();
+  var claim = claimsData.CLAIMS[s.claim] || claimsData.CLAIMS.linda;
+  // apply any admin image override
+  var atts = (claim.attachments || []).map(function (a) {
+    var ov = s.imageOverrides && s.imageOverrides[claim.id];
+    if (ov && a.kind === "image") return Object.assign({}, a, { src: "/files/" + ov, name: a.name });
+    return a;
+  });
+  var fm = claimsData.finalMessage(claim, s.style);
+  res.json({
+    claimId: claim.id, label: claim.label, fields: claim.fields,
+    attachments: atts, recommendation: fm.recommendation,
+    reason: fm.reason, framing: fm.framing,
+    chatFont: s.chatFont, layout: s.layout, style: s.style, attachMode: s.attachMode || "large",
+  });
+});
+
+// List available claims (for admin dropdown)
+app.get("/api/claims", function (_req, res) {
+  var list = Object.keys(claimsData.CLAIMS).map(function (k) {
+    return { id: k, label: claimsData.CLAIMS[k].label };
+  });
+  res.json({ claims: list });
+});
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -236,6 +264,36 @@ app.get("/api/admin/export", checkAdmin, function (_req, res) {
   res.setHeader("Content-Type", "application/x-ndjson");
   res.setHeader("Content-Disposition", "attachment; filename=events.jsonl");
   fs.createReadStream(store.EVENTS_FILE).pipe(res);
+});
+
+// Admin: get current settings
+app.get("/api/admin/settings", checkAdmin, function (_req, res) {
+  res.json({ settings: store.loadSettings() });
+});
+
+// Admin: save settings (claim, style, font, layout)
+app.post("/api/admin/settings", checkAdmin, function (req, res) {
+  var b = req.body || {};
+  var patch = {};
+  if (b.claim) patch.claim = b.claim;
+  if (b.style) patch.style = b.style;
+  if (b.chatFont) patch.chatFont = parseInt(b.chatFont, 10) || 15;
+  if (b.layout) patch.layout = b.layout;
+  if (b.attachMode) patch.attachMode = b.attachMode;
+  res.json({ ok: true, settings: store.saveSettings(patch) });
+});
+
+// Admin: override a claim's invoice image
+app.post("/api/admin/image/:claimId", checkAdmin, upload.single("image"), function (req, res) {
+  if (!req.file) return res.status(400).json({ error: "No file" });
+  var ext = (req.file.originalname.match(/\.[a-z0-9]+$/i) || [".png"])[0];
+  var fname = "img_" + req.params.claimId + "_" + Date.now() + ext;
+  fs.writeFileSync(path.join(store.UPLOAD_DIR, fname), req.file.buffer);
+  var s = store.loadSettings();
+  var ov = s.imageOverrides || {};
+  ov[req.params.claimId] = fname;
+  store.saveSettings({ imageOverrides: ov });
+  res.json({ ok: true, file: fname });
 });
 
 app.get("/api/health", function (_req, res) { res.json({ ok: true, aiConfigured: Boolean(genAI) }); });

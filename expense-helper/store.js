@@ -5,6 +5,21 @@ const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "data");
 const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, "uploads_store");
 const PRESETS_FILE = path.join(DATA_DIR, "presets.json");
 const EVENTS_FILE = path.join(DATA_DIR, "events.jsonl");
+const SETTINGS_FILE = path.join(DATA_DIR, "settings.json");
+
+const DEFAULT_SETTINGS = { claim: "linda", style: "command", chatFont: 15, layout: "leftright", attachMode: "large", imageOverrides: {} };
+
+function loadSettings() {
+  try {
+    if (fs.existsSync(SETTINGS_FILE)) return Object.assign({}, DEFAULT_SETTINGS, JSON.parse(fs.readFileSync(SETTINGS_FILE, "utf8")));
+  } catch (e) { console.error("loadSettings:", e.message); }
+  return Object.assign({}, DEFAULT_SETTINGS);
+}
+function saveSettings(patch) {
+  const merged = Object.assign(loadSettings(), patch || {});
+  fs.writeFileSync(SETTINGS_FILE, JSON.stringify(merged, null, 2));
+  return merged;
+}
 
 for (const d of [DATA_DIR, UPLOAD_DIR]) {
   if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true });
@@ -76,6 +91,8 @@ function readEvents() {
 }
 
 module.exports = {
+  DATA_DIR, UPLOAD_DIR, EVENTS_FILE,
+  loadSettings, saveSettings,
   DATA_DIR, UPLOAD_DIR, EVENTS_FILE,
   loadPresets, savePresets, updatePreset,
   logEvent, readEvents,
