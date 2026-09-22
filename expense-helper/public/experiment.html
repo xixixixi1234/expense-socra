@@ -24,9 +24,9 @@
   .status-pill.approved { background:#dcfce7; color:var(--green); }
   .status-pill.rejected { background:#fee2e2; color:var(--red); }
   .status-pill .dot { width:9px; height:9px; border-radius:50%; background:currentColor; }
-  .grid { display:grid; grid-template-columns:0.82fr 1.18fr; gap:24px; padding:16px 28px 96px; flex:1; align-items:stretch; }
+  .grid { display:grid; grid-template-columns:1fr; gap:24px; padding:16px 28px 96px; flex:1; align-items:start; }
   .card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; display:flex; flex-direction:column; }
-  .card h2 { display:flex; align-items:center; gap:10px; font-size:21px; font-weight:700; margin-bottom:20px; }
+  .card h2 { display:flex; align-items:center; gap:10px; font-size:24px; font-weight:700; margin-bottom:20px; }
   .card h2.sub { margin-top:4px; }
   .card h2 .ic { color:var(--blue); }
   .divider { height:1px; background:var(--border); margin:24px 0; }
@@ -84,6 +84,14 @@
   .bubble .imgwrap { margin-top:4px; }
   .bubble .imgwrap img { max-width:220px; max-height:220px; border-radius:12px; border:1px solid rgba(255,255,255,.4); cursor:zoom-in; display:block; }
   .bubble .fileline { display:flex; align-items:center; gap:8px; font-size:14px; }
+  #bold-tool { position:fixed; z-index:60; display:none; background:#0f172a; color:#fff; border:none; border-radius:8px; padding:6px 12px; font-size:15px; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,.25); }
+  #bold-tool:hover { background:#1e293b; }
+  #claim-switcher { position:fixed; right:0; top:50%; transform:translateY(-50%); z-index:70; display:flex; flex-direction:column; gap:6px; background:rgba(15,23,42,.9); padding:10px 8px; border-radius:12px 0 0 12px; }
+  #claim-switcher .cs-title { color:#94a3b8; font-size:10px; text-align:center; margin-bottom:2px; }
+  #claim-switcher button { border:none; background:#334155; color:#fff; width:64px; padding:8px 6px; border-radius:8px; font-size:12px; cursor:pointer; font-weight:600; }
+  #claim-switcher button.active { background:#2563eb; }
+  #claim-switcher button:hover { background:#475569; }
+  #claim-switcher button.active:hover { background:#1d4ed8; }
   .composer { display:flex; gap:10px; margin-top:18px; align-items:center; }
   .composer input[type=text], .composer #chat-input { flex:1; border:1px solid var(--border); border-radius:14px; padding:16px 18px; font-size:17px; outline:none; }
   .composer #chat-input:focus { border-color:var(--blue); }
@@ -151,12 +159,11 @@
           <tr class="total"><td colspan="3">Total</td><td id="c-total">-</td></tr>
         </tbody>
       </table>
+    </div>
 
-      <div id="attach-section">
-      <div class="divider"></div>
+    <div class="card" id="attach-section">
       <h2 class="sub"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Attachment</h2>
       <div class="attach-list" id="attach-list"></div>
-      </div>
     </div>
 
     <div class="card chat">
@@ -185,6 +192,8 @@
 </div>
 
 <div class="modal" id="modal"><button class="close" id="modal-close">&times;</button><img id="modal-img" src="" /></div>
+<button id="bold-tool" title="Bold selected text">B</button>
+<div id="claim-switcher"><div class="cs-title">CLAIM</div></div>
 
 <script>
 var PID = sessionStorage.getItem("pid");
@@ -343,20 +352,75 @@ function handleFiles(fileList){
   });
 }
 
-// init: load current config
-fetch("/api/current").then(function(r){return r.json();}).then(function(d){
-  CFG=d;
-  document.documentElement.style.setProperty("--chat-font", (d.chatFont||15)+"px");
-  applyLayout(d.layout||"leftright");
-  renderInvoice(); bindEditable(); initChat();
+// Select text inside a chat bubble -> show floating Bold button
+var boldTool=document.getElementById("bold-tool");
+var lastRange=null;
+document.addEventListener("selectionchange",function(){
+  var sel=window.getSelection();
+  if(!sel||sel.isCollapsed||!sel.rangeCount){ boldTool.style.display="none"; return; }
+  var range=sel.getRangeAt(0);
+  var node=range.commonAncestorContainer;
+  var el=(node.nodeType===3)?node.parentElement:node;
+  var bubble=el && el.closest ? el.closest(".bubble") : null;
+  if(bubble && bubble.getAttribute("contenteditable")==="true"){
+    var rect=range.getBoundingClientRect();
+    boldTool.style.display="block";
+    boldTool.style.left=(rect.left+rect.width/2-16)+"px";
+    boldTool.style.top=(rect.top-40)+"px";
+    lastRange=range;
+  } else { boldTool.style.display="none"; }
+});
+boldTool.addEventListener("mousedown",function(e){
+  e.preventDefault();
+  if(lastRange){ var sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(lastRange); }
+  document.execCommand("bold");
+  boldTool.style.display="none";
 });
 
-function applyLayout(layout){
-  var grid=document.querySelector(".grid");
-  if(layout==="topbottom"){ grid.style.gridTemplateColumns="1fr"; }
-  else if(layout==="chatfocus"){ grid.style.gridTemplateColumns="0.6fr 1.4fr"; }
-  else { grid.style.gridTemplateColumns="0.82fr 1.18fr"; } // leftright default
+// init: load current config
+var CURRENT_CLAIM_KEY=null;
+var CLAIM_KEYS=[];
+
+function loadCurrent(claimKey){
+  var url = claimKey ? ("/api/current?claim="+encodeURIComponent(claimKey)) : "/api/current";
+  return fetch(url).then(function(r){return r.json();}).then(function(d){
+    CFG=d; CURRENT_CLAIM_KEY=d.claimId; decision=null; chat=[];
+    document.documentElement.style.setProperty("--chat-font", (d.chatFont||15)+"px");
+    if(d.chatBold){ var st=document.getElementById("boldstyle"); if(!st){ st=document.createElement("style"); st.id="boldstyle"; st.textContent=".messages .bubble{font-weight:700;}"; document.head.appendChild(st); } }
+    else { var ex=document.getElementById("boldstyle"); if(ex) ex.remove(); }
+    renderInvoice(); bindEditable(); initChat();
+    highlightSwitcher();
+  });
 }
+
+// Build the side switcher from the claim list
+fetch("/api/claims").then(function(r){return r.json();}).then(function(d){
+  var sw=document.getElementById("claim-switcher");
+  (d.claims||[]).forEach(function(c,i){
+    CLAIM_KEYS.push(c.id);
+    var btn=document.createElement("button");
+    btn.setAttribute("data-key",c.id);
+    var short=c.label.split(" - ")[0];
+    btn.textContent=(i+1)+". "+short;
+    btn.onclick=function(){ loadCurrent(c.id); };
+    sw.appendChild(btn);
+  });
+  loadCurrent(); // load default (admin-selected)
+});
+
+function highlightSwitcher(){
+  document.querySelectorAll("#claim-switcher button").forEach(function(b){
+    b.classList.toggle("active", b.getAttribute("data-key")===CURRENT_CLAIM_KEY);
+  });
+}
+
+// Keyboard shortcuts 1-4 to switch claim (ignored while editing text)
+document.addEventListener("keydown",function(e){
+  var t=e.target;
+  if(t && (t.isContentEditable || t.tagName==="INPUT" || t.tagName==="TEXTAREA")) return;
+  var n=parseInt(e.key,10);
+  if(n>=1 && n<=CLAIM_KEYS.length){ loadCurrent(CLAIM_KEYS[n-1]); }
+});
 </script>
 </body>
 </html>

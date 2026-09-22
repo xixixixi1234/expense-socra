@@ -25,9 +25,10 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/files", express.static(store.UPLOAD_DIR));
 
 // Current experiment config for the participant page
-app.get("/api/current", function (_req, res) {
+app.get("/api/current", function (req, res) {
   var s = store.loadSettings();
-  var claim = claimsData.CLAIMS[s.claim] || claimsData.CLAIMS.linda;
+  var claimKey = (req.query && req.query.claim) ? req.query.claim : s.claim;
+  var claim = claimsData.CLAIMS[claimKey] || claimsData.CLAIMS[s.claim] || claimsData.CLAIMS.linda;
   // apply any admin image override
   var atts = (claim.attachments || []).map(function (a) {
     var ov = s.imageOverrides && s.imageOverrides[claim.id];
@@ -39,7 +40,7 @@ app.get("/api/current", function (_req, res) {
     claimId: claim.id, label: claim.label, fields: claim.fields,
     attachments: atts, recommendation: fm.recommendation,
     reason: fm.reason, framing: fm.framing,
-    chatFont: s.chatFont, layout: s.layout, style: s.style, attachMode: s.attachMode || "large",
+    chatFont: s.chatFont, chatBold: !!s.chatBold, layout: s.layout, style: s.style, attachMode: s.attachMode || "large",
   });
 });
 
@@ -278,6 +279,7 @@ app.post("/api/admin/settings", checkAdmin, function (req, res) {
   if (b.claim) patch.claim = b.claim;
   if (b.style) patch.style = b.style;
   if (b.chatFont) patch.chatFont = parseInt(b.chatFont, 10) || 15;
+  if (typeof b.chatBold !== "undefined") patch.chatBold = !!b.chatBold;
   if (b.layout) patch.layout = b.layout;
   if (b.attachMode) patch.attachMode = b.attachMode;
   res.json({ ok: true, settings: store.saveSettings(patch) });

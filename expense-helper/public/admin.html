@@ -65,7 +65,8 @@
           </div>
         </div>
         <label>Chat font size: <span class="fontval" id="fontval">15px</span></label>
-        <input type="range" id="sel-font" min="12" max="26" step="1" value="15" />
+        <input type="range" id="sel-font" min="12" max="30" step="1" value="15" />
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="sel-bold" style="width:auto" /> Make all chat bubbles bold</label>
         <label>Layout</label>
         <select id="sel-layout">
           <option value="leftright">Left claim + Right chat (default)</option>
@@ -143,12 +144,13 @@ function applySettings(s){
   document.getElementById("fontval").textContent=(s.chatFont||15)+"px";
   document.getElementById("sel-layout").value=s.layout||"leftright";
   document.getElementById("sel-attach").value=s.attachMode||"large";
+  document.getElementById("sel-bold").checked=!!s.chatBold;
 }
 
 document.getElementById("sel-font").addEventListener("input",function(e){ document.getElementById("fontval").textContent=e.target.value+"px"; });
 
 document.getElementById("save").onclick=function(){
-  var body={ claim:document.getElementById("sel-claim").value, style:document.getElementById("sel-style").value, chatFont:document.getElementById("sel-font").value, layout:document.getElementById("sel-layout").value, attachMode:document.getElementById("sel-attach").value };
+  var body={ claim:document.getElementById("sel-claim").value, style:document.getElementById("sel-style").value, chatFont:document.getElementById("sel-font").value, chatBold:document.getElementById("sel-bold").checked, layout:document.getElementById("sel-layout").value, attachMode:document.getElementById("sel-attach").value };
   fetch("/api/admin/settings",{method:"POST",headers:Object.assign({"Content-Type":"application/json"},h()),body:JSON.stringify(body)})
     .then(function(r){return r.json();}).then(function(d){ if(d.ok) document.getElementById("save-ok").textContent="Saved. Refresh the participant view."; });
 };

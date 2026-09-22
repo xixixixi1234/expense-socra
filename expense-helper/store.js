@@ -7,7 +7,7 @@ const PRESETS_FILE = path.join(DATA_DIR, "presets.json");
 const EVENTS_FILE = path.join(DATA_DIR, "events.jsonl");
 const SETTINGS_FILE = path.join(DATA_DIR, "settings.json");
 
-const DEFAULT_SETTINGS = { claim: "linda", style: "command", chatFont: 15, layout: "leftright", attachMode: "large", imageOverrides: {} };
+const DEFAULT_SETTINGS = { claim: "linda", style: "command", chatFont: 15, chatBold: false, layout: "leftright", attachMode: "large", imageOverrides: {} };
 
 function loadSettings() {
   try {
