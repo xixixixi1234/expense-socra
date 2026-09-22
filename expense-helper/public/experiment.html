@@ -99,6 +99,8 @@
   #claim-switcher button.active { background:#2563eb; }
   #claim-switcher button:hover { background:#475569; }
   #claim-switcher button.active:hover { background:#1d4ed8; }
+  #claim-switcher button.cs-add { background:#15803d; }
+  #claim-switcher button.cs-add:hover { background:#166534; }
   .composer { display:flex; gap:10px; margin-top:18px; align-items:center; }
   .composer input[type=text], .composer #chat-input { flex:1; border:1px solid var(--border); border-radius:14px; padding:16px 18px; font-size:17px; outline:none; }
   .composer #chat-input:focus { border-color:var(--blue); }
@@ -177,7 +179,6 @@
       <div class="chat-head">
         <div class="bot"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M12 8V4"/><circle cx="12" cy="3" r="1"/><path d="M8 14h.01"/><path d="M16 14h.01"/><path d="M9 18h6"/></svg></div>
         <b>ExpenseHelper</b>
-        <span class="adders"><button id="add-ai">+ AI bubble</button><button id="add-user">+ You bubble</button></span>
       </div>
       <div class="messages" id="messages"></div>
       <div class="composer">
@@ -305,8 +306,7 @@ function addManualBubble(who){
   var sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
   return b;
 }
-document.getElementById("add-ai").onclick=function(){ addManualBubble("assistant"); };
-document.getElementById("add-user").onclick=function(){ addManualBubble("user"); };
+
 
 function initChat(){
   messagesEl.innerHTML="";
@@ -437,11 +437,15 @@ fetch("/api/claims").then(function(r){return r.json();}).then(function(d){
     btn.onclick=function(){ loadCurrent(c.id); };
     sw.appendChild(btn);
   });
+  // divider + bubble adders
+  var t2=document.createElement("div"); t2.className="cs-title"; t2.style.marginTop="8px"; t2.textContent="ADD BUBBLE"; sw.appendChild(t2);
+  var bAI=document.createElement("button"); bAI.className="cs-add"; bAI.textContent="+ AI"; bAI.onclick=function(){ addManualBubble("assistant"); }; sw.appendChild(bAI);
+  var bYou=document.createElement("button"); bYou.className="cs-add"; bYou.textContent="+ You"; bYou.onclick=function(){ addManualBubble("user"); }; sw.appendChild(bYou);
   loadCurrent(); // load default (admin-selected)
 });
 
 function highlightSwitcher(){
-  document.querySelectorAll("#claim-switcher button").forEach(function(b){
+  document.querySelectorAll("#claim-switcher button[data-key]").forEach(function(b){
     b.classList.toggle("active", b.getAttribute("data-key")===CURRENT_CLAIM_KEY);
   });
 }
