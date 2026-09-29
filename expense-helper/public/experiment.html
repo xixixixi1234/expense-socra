@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>ExpenseHelper - AI Audit Assistant</title>
 <style>
-  :root { --blue:#2563eb; --blue-dark:#1d4ed8; --blue-soft:#eff4ff; --green:#15803d; --red:#dc2626; --text:#0f172a; --muted:#64748b; --border:#e2e8f0; --bg:#f1f5f9; --card:#fff; }
+  :root { --blue:#2563eb; --blue-dark:#1d4ed8; --blue-soft:#eff4ff; --green:#15803d; --red:#dc2626; --text:#0f172a; --muted:#64748b; --border:#e2e8f0; --bg:#f1f5f9; --card:#fff; --scale:1; }
   * { box-sizing:border-box; margin:0; padding:0; }
   body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
   svg { display:block; }
@@ -18,7 +18,7 @@
   .user { display:flex; align-items:center; gap:10px; color:var(--muted); font-weight:600; font-size:15px; }
   .user .avatar { width:40px; height:40px; border-radius:50%; background:var(--blue-soft); color:var(--blue); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; }
   .crumb { display:flex; align-items:center; justify-content:space-between; padding:16px 28px 4px; }
-  .crumb .path { color:var(--muted); font-size:16px; }
+  .crumb .path { color:var(--muted); font-size:calc(16px * var(--scale)); }
   .crumb .path b { color:var(--text); }
   .status-pill { display:inline-flex; align-items:center; gap:8px; background:var(--blue-soft); color:var(--blue); font-weight:700; font-size:14px; padding:8px 16px; border-radius:999px; }
   .status-pill.approved { background:#dcfce7; color:var(--green); }
@@ -26,7 +26,7 @@
   .status-pill .dot { width:9px; height:9px; border-radius:50%; background:currentColor; }
   .grid { display:grid; grid-template-columns:1fr; gap:24px; padding:16px 28px 96px; flex:1; align-items:start; }
   .card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; display:flex; flex-direction:column; }
-  .card h2 { display:flex; align-items:center; gap:12px; font-size:26px; font-weight:700; margin-bottom:24px; }
+  .card h2 { display:flex; align-items:center; gap:12px; font-size:calc(26px * var(--scale)); font-weight:700; margin-bottom:24px; }
   .card h2.sub { margin-top:4px; }
   .card h2 .ic { color:var(--blue); }
   .divider { height:1px; background:var(--border); margin:24px 0; }
@@ -42,8 +42,8 @@
   .attach-preview.thumb img { width:72px; height:72px; object-fit:cover; }
   .attach-preview.thumb .viewbig { color:var(--blue); font-weight:600; font-size:14px; cursor:pointer; }
   .fields { display:grid; grid-template-columns:1fr 1fr; gap:24px 40px; }
-  .field label { display:block; font-size:15px; color:var(--muted); margin-bottom:6px; }
-  .field .val { font-size:20px; font-weight:500; }
+  .field label { display:block; font-size:calc(17px * var(--scale)); color:var(--muted); margin-bottom:6px; }
+  .field .val { font-size:calc(20px * var(--scale)); font-weight:500; }
   .field .val[contenteditable] { cursor:text; border-radius:4px; padding:2px 4px; margin:-2px -4px; transition:background .1s; outline:none; }
   .field .val[contenteditable]:hover { background:#f1f5f9; }
   .field .val[contenteditable]:focus { background:#eff6ff; box-shadow:0 0 0 2px #bfdbfe; }
@@ -52,7 +52,7 @@
   td[contenteditable]:focus { background:#eff6ff; box-shadow:inset 0 0 0 2px #bfdbfe; }
   .field .sel { font-size:18px; font-weight:500; border:1px solid var(--border); border-radius:6px; padding:6px 10px; background:#fff; cursor:pointer; outline:none; color:var(--text); }
   .field .sel:focus { border-color:var(--blue); box-shadow:0 0 0 2px #bfdbfe; }
-  .mgr-badge { display:inline-flex; align-items:center; gap:8px; font-size:20px; font-weight:700; padding:10px 18px; border-radius:999px; cursor:pointer; user-select:none; border:2px solid transparent; }
+  .mgr-badge { display:inline-flex; align-items:center; gap:8px; font-size:calc(20px * var(--scale)); font-weight:700; padding:10px 18px; border-radius:999px; cursor:pointer; user-select:none; border:2px solid transparent; }
   .mgr-badge.yes { background:#dcfce7; color:#15803d; border-color:#86efac; }
   .mgr-badge.no { background:#f1f5f9; color:#64748b; border-color:#e2e8f0; }
   .mgr-badge .ic { display:flex; }
@@ -60,8 +60,8 @@
   .mgr-hint { font-size:11px; color:var(--muted); margin-top:4px; }
   table { width:100%; border-collapse:collapse; margin-top:8px; table-layout:fixed; }
   table th, table td { box-sizing:border-box; padding:16px 14px; text-align:left; vertical-align:top; border-bottom:1px solid var(--border); overflow-wrap:break-word; word-break:break-word; }
-  table th { font-size:15px; color:var(--muted); font-weight:600; }
-  table td { font-size:19px; line-height:1.45; }
+  table th { font-size:calc(17px * var(--scale)); color:var(--muted); font-weight:600; }
+  table td { font-size:calc(19px * var(--scale)); line-height:1.45; }
   table th:nth-child(1), table td:nth-child(1) { width:26%; }
   table th:nth-child(2), table td:nth-child(2) { width:18%; }
   table th:nth-child(3), table td:nth-child(3) { width:36%; }
@@ -82,7 +82,7 @@
   .bubble:hover .del-bubble { display:flex; align-items:center; justify-content:center; }
   .bubble.user .del-bubble { background:rgba(255,255,255,.25); color:#fff; }
   .messages { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:14px; padding-right:4px; min-height:440px; }
-  .bubble { max-width:92%; padding:18px 22px; border-radius:16px; font-size:var(--chat-font,19px); line-height:1.55; border:1px solid var(--border); background:#fff; white-space:pre-wrap; }
+  .bubble { max-width:92%; padding:18px 22px; border-radius:16px; font-size:calc(var(--chat-font,19px) * var(--scale)); line-height:1.55; border:1px solid var(--border); background:#fff; white-space:pre-wrap; }
   .bubble.user { align-self:flex-end; background:var(--blue); color:#fff; border-color:var(--blue); }
   .bubble.demo-note { font-size:12px; color:var(--muted); border-style:dashed; background:#fafbfc; }
   .bubble.rec { font-weight:700; color:#0f172a; font-size:calc(var(--chat-font,19px) + 1px); }
@@ -104,6 +104,8 @@
   #claim-switcher button.cs-style.active { background:#2563eb; }
   #claim-switcher button.cs-add { background:#15803d; }
   #claim-switcher button.cs-add:hover { background:#166534; }
+  #claim-switcher button.cs-font { background:#0369a1; font-size:15px; padding:8px 4px; }
+  #claim-switcher button.cs-font:hover { background:#075985; }
   .composer { display:flex; gap:10px; margin-top:18px; align-items:center; }
   .composer input[type=text], .composer #chat-input { flex:1; border:1px solid var(--border); border-radius:14px; padding:16px 18px; font-size:17px; outline:none; }
   .composer #chat-input:focus { border-color:var(--blue); }
@@ -312,7 +314,14 @@ function addManualBubble(who){
 
 function initChat(){
   messagesEl.innerHTML="";
-  addBubble("Audit processing.\n\nThis claim could be valid.\n\nBut my check does not always catch every rule in the Guide.\n\nPlease read the details and confirm they meet your manual.","assistant");
+  // Show the full audited conversation by default (matches the screenshots):
+  // Audit processing... -> Audit complete! -> recommendation -> reason + framing
+  addBubble("Audit processing...","assistant");
+  addBubble("Audit complete!","assistant");
+  var recLabel = CFG.recommendation==="Flag" ? "Flag" : "Approve";
+  addBubble("Audit recommendation: "+recLabel,"assistant",false,"rec");
+  var msg=(CFG.reason?escapeHtml(CFG.reason)+"\n":"")+"<b>"+escapeHtml(CFG.framing)+"</b>";
+  addBubble(msg,"assistant",false,null,true);
 }
 
 async function sendMessage(text){
@@ -451,6 +460,13 @@ fetch("/api/claims").then(function(r){return r.json();}).then(function(d){
   var bA=document.createElement("button"); bA.className="cs-style"; bA.setAttribute("data-style","command"); bA.textContent="A"; bA.title="Command framing"; bA.onclick=function(){ loadCurrent(null,"command"); }; sw.appendChild(bA);
   var bS=document.createElement("button"); bS.className="cs-style"; bS.setAttribute("data-style","socratic"); bS.textContent="S"; bS.title="Socratic (question) framing"; bS.onclick=function(){ loadCurrent(null,"socratic"); }; sw.appendChild(bS);
 
+  // FONT SIZE
+  var t4=document.createElement("div"); t4.className="cs-title"; t4.style.marginTop="10px"; t4.textContent="FONT"; sw.appendChild(t4);
+  var frow=document.createElement("div"); frow.style.display="flex"; frow.style.gap="4px";
+  var bMinus=document.createElement("button"); bMinus.className="cs-font"; bMinus.textContent="A-"; bMinus.title="Smaller"; bMinus.style.flex="1"; bMinus.onclick=function(){ setScale(SCALE-0.1); };
+  var bPlus=document.createElement("button"); bPlus.className="cs-font"; bPlus.textContent="A+"; bPlus.title="Larger"; bPlus.style.flex="1"; bPlus.onclick=function(){ setScale(SCALE+0.1); };
+  frow.appendChild(bMinus); frow.appendChild(bPlus); sw.appendChild(frow);
+
   // ADD BUBBLE
   var t3=document.createElement("div"); t3.className="cs-title"; t3.style.marginTop="10px"; t3.textContent="ADD BUBBLE"; sw.appendChild(t3);
   var bAI=document.createElement("button"); bAI.className="cs-add"; bAI.textContent="+ AI"; bAI.onclick=function(){ addManualBubble("assistant"); }; sw.appendChild(bAI);
@@ -458,6 +474,12 @@ fetch("/api/claims").then(function(r){return r.json();}).then(function(d){
 
   loadCurrent(); // load default (admin-selected)
 });
+
+var SCALE=1;
+function setScale(v){
+  SCALE=Math.max(0.7, Math.min(1.8, Math.round(v*10)/10));
+  document.documentElement.style.setProperty("--scale", SCALE);
+}
 
 function highlightSwitcher(){
   document.querySelectorAll("#claim-switcher button[data-key]").forEach(function(b){
