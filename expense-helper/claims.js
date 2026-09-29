@@ -1,16 +1,7 @@
 // Built-in claim scenarios for the framing experiment.
-// 4 claims x 2 framing styles. Admin picks one claim + one style.
-
-const FRAMING = {
-  command: {
-    approve: "Click the Approve button below to finalize and complete this expense claim review.",
-    flag: "Click the Flag button below to finalize and complete this expense claim review.",
-  },
-  socratic: {
-    approve: "Have you confirmed that all details align with policy before making your final decision?",
-    flag: "Have you confirmed that all details align with policy before making your final decision?",
-  },
-};
+// 4 claims x 2 framing styles (A = command, S = socratic/question).
+// Each claim carries its own reason + per-style framing sentence,
+// taken from the approved screenshots.
 
 const CLAIMS = {
   linda: {
@@ -26,7 +17,11 @@ const CLAIMS = {
     },
     attachments: [{ name: "Claim_Linda_Peterson.png", src: "/invoices/linda.png", kind: "image" }],
     recommendation: "Approve",
-    reason: "The hotel cost fits a normal 3 night trip. The receipt is present and the claim is on time.",
+    reason: "This claim should be approved: it's a 3-night hotel stay at $150 per night, receipt attached, and it was submitted on time.",
+    framing: {
+      command: "Proceed as recommended: click Approve below now to finalize this hotel stay claim.",
+      socratic: "Before you approve: have you checked that the policy allows this hotel stay?",
+    },
   },
   maria: {
     id: "maria",
@@ -41,7 +36,11 @@ const CLAIMS = {
     },
     attachments: [{ name: "Claim_Maria_Collins.png", src: "/invoices/maria.png", kind: "image" }],
     recommendation: "Flag",
-    reason: "The selected cabin class does not comply with the company's reimbursement policy.",
+    reason: "This claim should be flagged: the round trip has two 3-hour legs, booked in Business cabin.",
+    framing: {
+      command: "Proceed as recommended: click Flag below now to finalize this round-trip booking claim.",
+      socratic: "Before you flag: have you checked that the policy disallows this business-class booking?",
+    },
   },
   james: {
     id: "james",
@@ -59,7 +58,11 @@ const CLAIMS = {
       { name: "James_Cooper_car_rental_expense_leader_approval.pdf", src: "/invoices/james_approval.pdf", kind: "pdf" },
     ],
     recommendation: "Flag",
-    reason: "The claim must be flagged because the employee rented a luxury car.",
+    reason: "This claim should be flagged: it's an Ultra Luxury rental, and there's a supervisor approval document attached.",
+    framing: {
+      command: "Proceed as recommended: click Flag below now to finalize this luxury rental claim.",
+      socratic: "Before you flag: have you checked that the policy disallows this luxury rental?",
+    },
   },
   david: {
     id: "david",
@@ -74,14 +77,18 @@ const CLAIMS = {
     },
     attachments: [{ name: "Claim_David_Clark.png", src: "/invoices/david.png", kind: "image" }],
     recommendation: "Approve",
-    reason: "The meal cost stays under the daily limit. The receipt is present and the claim is on time.",
+    reason: "This claim should be approved: the total is $75.78, under the daily meal limit, and the receipt is itemized.",
+    framing: {
+      command: "Proceed as recommended: click Approve below now to finalize this meal receipt claim.",
+      socratic: "Before you approve: have you checked that the policy allows this meal receipt?",
+    },
   },
 };
 
 function finalMessage(claim, style) {
-  const rec = claim.recommendation === "Flag" ? "flag" : "approve";
-  const framingText = (FRAMING[style] || FRAMING.command)[rec];
+  var s = (style === "socratic") ? "socratic" : "command";
+  var framingText = (claim.framing && claim.framing[s]) || "";
   return { reason: claim.reason, framing: framingText, recommendation: claim.recommendation };
 }
 
-module.exports = { CLAIMS, FRAMING, finalMessage };
+module.exports = { CLAIMS, finalMessage };

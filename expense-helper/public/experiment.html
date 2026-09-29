@@ -26,7 +26,7 @@
   .status-pill .dot { width:9px; height:9px; border-radius:50%; background:currentColor; }
   .grid { display:grid; grid-template-columns:1fr; gap:24px; padding:16px 28px 96px; flex:1; align-items:start; }
   .card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; display:flex; flex-direction:column; }
-  .card h2 { display:flex; align-items:center; gap:10px; font-size:24px; font-weight:700; margin-bottom:20px; }
+  .card h2 { display:flex; align-items:center; gap:12px; font-size:26px; font-weight:700; margin-bottom:24px; }
   .card h2.sub { margin-top:4px; }
   .card h2 .ic { color:var(--blue); }
   .divider { height:1px; background:var(--border); margin:24px 0; }
@@ -41,9 +41,9 @@
   .attach-preview.thumb { display:flex; align-items:center; gap:12px; }
   .attach-preview.thumb img { width:72px; height:72px; object-fit:cover; }
   .attach-preview.thumb .viewbig { color:var(--blue); font-weight:600; font-size:14px; cursor:pointer; }
-  .fields { display:grid; grid-template-columns:1fr 1fr; gap:18px 28px; }
-  .field label { display:block; font-size:14px; color:var(--muted); margin-bottom:4px; }
-  .field .val { font-size:18px; font-weight:500; }
+  .fields { display:grid; grid-template-columns:1fr 1fr; gap:24px 40px; }
+  .field label { display:block; font-size:15px; color:var(--muted); margin-bottom:6px; }
+  .field .val { font-size:20px; font-weight:500; }
   .field .val[contenteditable] { cursor:text; border-radius:4px; padding:2px 4px; margin:-2px -4px; transition:background .1s; outline:none; }
   .field .val[contenteditable]:hover { background:#f1f5f9; }
   .field .val[contenteditable]:focus { background:#eff6ff; box-shadow:0 0 0 2px #bfdbfe; }
@@ -52,16 +52,16 @@
   td[contenteditable]:focus { background:#eff6ff; box-shadow:inset 0 0 0 2px #bfdbfe; }
   .field .sel { font-size:18px; font-weight:500; border:1px solid var(--border); border-radius:6px; padding:6px 10px; background:#fff; cursor:pointer; outline:none; color:var(--text); }
   .field .sel:focus { border-color:var(--blue); box-shadow:0 0 0 2px #bfdbfe; }
-  .mgr-badge { display:inline-flex; align-items:center; gap:8px; font-size:18px; font-weight:700; padding:8px 14px; border-radius:999px; cursor:pointer; user-select:none; border:2px solid transparent; }
+  .mgr-badge { display:inline-flex; align-items:center; gap:8px; font-size:20px; font-weight:700; padding:10px 18px; border-radius:999px; cursor:pointer; user-select:none; border:2px solid transparent; }
   .mgr-badge.yes { background:#dcfce7; color:#15803d; border-color:#86efac; }
   .mgr-badge.no { background:#f1f5f9; color:#64748b; border-color:#e2e8f0; }
   .mgr-badge .ic { display:flex; }
   .mgr-badge:hover { filter:brightness(0.97); }
   .mgr-hint { font-size:11px; color:var(--muted); margin-top:4px; }
   table { width:100%; border-collapse:collapse; margin-top:8px; table-layout:fixed; }
-  table th, table td { box-sizing:border-box; padding:14px 12px; text-align:left; vertical-align:top; border-bottom:1px solid var(--border); overflow-wrap:break-word; word-break:break-word; }
-  table th { font-size:14px; color:var(--muted); font-weight:600; }
-  table td { font-size:17px; line-height:1.45; }
+  table th, table td { box-sizing:border-box; padding:16px 14px; text-align:left; vertical-align:top; border-bottom:1px solid var(--border); overflow-wrap:break-word; word-break:break-word; }
+  table th { font-size:15px; color:var(--muted); font-weight:600; }
+  table td { font-size:19px; line-height:1.45; }
   table th:nth-child(1), table td:nth-child(1) { width:26%; }
   table th:nth-child(2), table td:nth-child(2) { width:18%; }
   table th:nth-child(3), table td:nth-child(3) { width:36%; }
@@ -82,10 +82,10 @@
   .bubble:hover .del-bubble { display:flex; align-items:center; justify-content:center; }
   .bubble.user .del-bubble { background:rgba(255,255,255,.25); color:#fff; }
   .messages { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:14px; padding-right:4px; min-height:440px; }
-  .bubble { max-width:88%; padding:16px 18px; border-radius:16px; font-size:var(--chat-font,15px); line-height:1.55; border:1px solid var(--border); background:#fff; white-space:pre-wrap; }
+  .bubble { max-width:92%; padding:18px 22px; border-radius:16px; font-size:var(--chat-font,19px); line-height:1.55; border:1px solid var(--border); background:#fff; white-space:pre-wrap; }
   .bubble.user { align-self:flex-end; background:var(--blue); color:#fff; border-color:var(--blue); }
   .bubble.demo-note { font-size:12px; color:var(--muted); border-style:dashed; background:#fafbfc; }
-  .bubble.rec { font-weight:700; color:#0f172a; font-size:calc(var(--chat-font,15px) + 1px); }
+  .bubble.rec { font-weight:700; color:#0f172a; font-size:calc(var(--chat-font,19px) + 1px); }
   .bubble[contenteditable]:hover { box-shadow:0 0 0 2px #dbeafe; }
   .bubble[contenteditable]:focus { outline:none; box-shadow:0 0 0 2px #93c5fd; }
   .bubble .imgwrap { margin-top:4px; }
@@ -99,6 +99,9 @@
   #claim-switcher button.active { background:#2563eb; }
   #claim-switcher button:hover { background:#475569; }
   #claim-switcher button.active:hover { background:#1d4ed8; }
+  #claim-switcher button.cs-style { background:#7c3aed; font-size:15px; padding:10px 6px; }
+  #claim-switcher button.cs-style:hover { background:#6d28d9; }
+  #claim-switcher button.cs-style.active { background:#2563eb; }
   #claim-switcher button.cs-add { background:#15803d; }
   #claim-switcher button.cs-add:hover { background:#166534; }
   .composer { display:flex; gap:10px; margin-top:18px; align-items:center; }
@@ -307,7 +310,6 @@ function addManualBubble(who){
   return b;
 }
 
-
 function initChat(){
   messagesEl.innerHTML="";
   addBubble("Audit processing.\n\nThis claim could be valid.\n\nBut my check does not always catch every rule in the Guide.\n\nPlease read the details and confirm they meet your manual.","assistant");
@@ -411,13 +413,19 @@ boldTool.addEventListener("mousedown",function(e){
 
 // init: load current config
 var CURRENT_CLAIM_KEY=null;
+var CURRENT_STYLE=null;   // "command" (A) or "socratic" (S)
 var CLAIM_KEYS=[];
 
-function loadCurrent(claimKey){
-  var url = claimKey ? ("/api/current?claim="+encodeURIComponent(claimKey)) : "/api/current";
+function loadCurrent(claimKey, styleKey){
+  if(claimKey===undefined||claimKey===null) claimKey=CURRENT_CLAIM_KEY;
+  if(styleKey===undefined||styleKey===null) styleKey=CURRENT_STYLE;
+  var params=[];
+  if(claimKey) params.push("claim="+encodeURIComponent(claimKey));
+  if(styleKey) params.push("style="+encodeURIComponent(styleKey));
+  var url = params.length ? ("/api/current?"+params.join("&")) : "/api/current";
   return fetch(url).then(function(r){return r.json();}).then(function(d){
-    CFG=d; CURRENT_CLAIM_KEY=d.claimId; decision=null; chat=[];
-    document.documentElement.style.setProperty("--chat-font", (d.chatFont||15)+"px");
+    CFG=d; CURRENT_CLAIM_KEY=d.claimId; CURRENT_STYLE=d.style; decision=null; chat=[];
+    document.documentElement.style.setProperty("--chat-font", (d.chatFont||19)+"px");
     if(d.chatBold){ var st=document.getElementById("boldstyle"); if(!st){ st=document.createElement("style"); st.id="boldstyle"; st.textContent=".messages .bubble{font-weight:700;}"; document.head.appendChild(st); } }
     else { var ex=document.getElementById("boldstyle"); if(ex) ex.remove(); }
     renderInvoice(); bindEditable(); initChat();
@@ -434,19 +442,29 @@ fetch("/api/claims").then(function(r){return r.json();}).then(function(d){
     btn.setAttribute("data-key",c.id);
     var short=c.label.split(" - ")[0];
     btn.textContent=(i+1)+". "+short;
-    btn.onclick=function(){ loadCurrent(c.id); };
+    btn.onclick=function(){ loadCurrent(c.id, null); };
     sw.appendChild(btn);
   });
-  // divider + bubble adders
-  var t2=document.createElement("div"); t2.className="cs-title"; t2.style.marginTop="8px"; t2.textContent="ADD BUBBLE"; sw.appendChild(t2);
+
+  // FRAMING A / S switch
+  var t2=document.createElement("div"); t2.className="cs-title"; t2.style.marginTop="10px"; t2.textContent="FRAMING"; sw.appendChild(t2);
+  var bA=document.createElement("button"); bA.className="cs-style"; bA.setAttribute("data-style","command"); bA.textContent="A"; bA.title="Command framing"; bA.onclick=function(){ loadCurrent(null,"command"); }; sw.appendChild(bA);
+  var bS=document.createElement("button"); bS.className="cs-style"; bS.setAttribute("data-style","socratic"); bS.textContent="S"; bS.title="Socratic (question) framing"; bS.onclick=function(){ loadCurrent(null,"socratic"); }; sw.appendChild(bS);
+
+  // ADD BUBBLE
+  var t3=document.createElement("div"); t3.className="cs-title"; t3.style.marginTop="10px"; t3.textContent="ADD BUBBLE"; sw.appendChild(t3);
   var bAI=document.createElement("button"); bAI.className="cs-add"; bAI.textContent="+ AI"; bAI.onclick=function(){ addManualBubble("assistant"); }; sw.appendChild(bAI);
   var bYou=document.createElement("button"); bYou.className="cs-add"; bYou.textContent="+ You"; bYou.onclick=function(){ addManualBubble("user"); }; sw.appendChild(bYou);
+
   loadCurrent(); // load default (admin-selected)
 });
 
 function highlightSwitcher(){
   document.querySelectorAll("#claim-switcher button[data-key]").forEach(function(b){
     b.classList.toggle("active", b.getAttribute("data-key")===CURRENT_CLAIM_KEY);
+  });
+  document.querySelectorAll("#claim-switcher button[data-style]").forEach(function(b){
+    b.classList.toggle("active", b.getAttribute("data-style")===CURRENT_STYLE);
   });
 }
 

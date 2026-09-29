@@ -28,6 +28,7 @@ app.use("/files", express.static(store.UPLOAD_DIR));
 app.get("/api/current", function (req, res) {
   var s = store.loadSettings();
   var claimKey = (req.query && req.query.claim) ? req.query.claim : s.claim;
+  var styleKey = (req.query && req.query.style) ? req.query.style : s.style;
   var claim = claimsData.CLAIMS[claimKey] || claimsData.CLAIMS[s.claim] || claimsData.CLAIMS.linda;
   // apply any admin image override
   var atts = (claim.attachments || []).map(function (a) {
@@ -35,12 +36,12 @@ app.get("/api/current", function (req, res) {
     if (ov && a.kind === "image") return Object.assign({}, a, { src: "/files/" + ov, name: a.name });
     return a;
   });
-  var fm = claimsData.finalMessage(claim, s.style);
+  var fm = claimsData.finalMessage(claim, styleKey);
   res.json({
     claimId: claim.id, label: claim.label, fields: claim.fields,
     attachments: atts, recommendation: fm.recommendation,
     reason: fm.reason, framing: fm.framing,
-    chatFont: s.chatFont, chatBold: !!s.chatBold, layout: s.layout, style: s.style, attachMode: s.attachMode || "large",
+    chatFont: s.chatFont, chatBold: !!s.chatBold, layout: s.layout, style: styleKey, attachMode: s.attachMode || "large",
   });
 });
 
