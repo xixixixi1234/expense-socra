@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>ExpenseHelper - AI Audit Assistant</title>
 <style>
-  :root { --blue:#2563eb; --blue-dark:#1d4ed8; --blue-soft:#eff4ff; --green:#15803d; --red:#dc2626; --text:#0f172a; --muted:#64748b; --border:#e2e8f0; --bg:#f1f5f9; --card:#fff; --scale:1; }
+  :root { --blue:#2563eb; --blue-dark:#1d4ed8; --blue-soft:#eff4ff; --green:#15803d; --red:#dc2626; --text:#0f172a; --muted:#64748b; --border:#e2e8f0; --bg:#f1f5f9; --card:#fff; --scale:1; --wt:400; --wt-strong:700; }
+  /* Global bold toggle: when body.allbold is on, force everything bold */
+  body.allbold, body.allbold .field label, body.allbold .field .val, body.allbold table th, body.allbold table td, body.allbold .bubble, body.allbold .crumb .path, body.allbold .card h2 { font-weight:700 !important; }
   * { box-sizing:border-box; margin:0; padding:0; }
   body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
   svg { display:block; }
@@ -85,7 +87,7 @@
   .bubble { max-width:92%; padding:18px 22px; border-radius:16px; font-size:calc(var(--chat-font,19px) * var(--scale)); line-height:1.55; border:1px solid var(--border); background:#fff; white-space:pre-wrap; }
   .bubble.user { align-self:flex-end; background:var(--blue); color:#fff; border-color:var(--blue); }
   .bubble.demo-note { font-size:12px; color:var(--muted); border-style:dashed; background:#fafbfc; }
-  .bubble.rec { font-weight:700; color:#0f172a; font-size:calc(var(--chat-font,19px) + 1px); }
+  .bubble.rec { font-weight:700; color:#0f172a; font-size:calc(var(--chat-font,19px) * var(--scale)); }
   .bubble[contenteditable]:hover { box-shadow:0 0 0 2px #dbeafe; }
   .bubble[contenteditable]:focus { outline:none; box-shadow:0 0 0 2px #93c5fd; }
   .bubble .imgwrap { margin-top:4px; }
@@ -104,6 +106,8 @@
   #claim-switcher button.cs-style.active { background:#2563eb; }
   #claim-switcher button.cs-add { background:#15803d; }
   #claim-switcher button.cs-add:hover { background:#166534; }
+  #claim-switcher button.cs-bold { background:#334155; font-size:13px; margin-top:4px; }
+  #claim-switcher button.cs-bold.active { background:#2563eb; }
   #claim-switcher button.cs-font { background:#0369a1; font-size:15px; padding:8px 4px; }
   #claim-switcher button.cs-font:hover { background:#075985; }
   .composer { display:flex; gap:10px; margin-top:18px; align-items:center; }
@@ -160,7 +164,6 @@
           <div class="mgr-badge no" id="c-managerApproval" data-val="No" title="Click to toggle">
             <span class="ic"></span><span class="mgr-text">No</span>
           </div>
-          <div class="mgr-hint">click to toggle</div>
         </div>
       </div>
 
@@ -466,6 +469,9 @@ fetch("/api/claims").then(function(r){return r.json();}).then(function(d){
   var bMinus=document.createElement("button"); bMinus.className="cs-font"; bMinus.textContent="A-"; bMinus.title="Smaller"; bMinus.style.flex="1"; bMinus.onclick=function(){ setScale(SCALE-0.1); };
   var bPlus=document.createElement("button"); bPlus.className="cs-font"; bPlus.textContent="A+"; bPlus.title="Larger"; bPlus.style.flex="1"; bPlus.onclick=function(){ setScale(SCALE+0.1); };
   frow.appendChild(bMinus); frow.appendChild(bPlus); sw.appendChild(frow);
+  var bBold=document.createElement("button"); bBold.className="cs-bold"; bBold.textContent="Bold: off"; bBold.title="Toggle bold for all text";
+  bBold.onclick=function(){ var on=document.body.classList.toggle("allbold"); bBold.textContent=on?"Bold: on":"Bold: off"; bBold.classList.toggle("active",on); };
+  sw.appendChild(bBold);
 
   // ADD BUBBLE
   var t3=document.createElement("div"); t3.className="cs-title"; t3.style.marginTop="10px"; t3.textContent="ADD BUBBLE"; sw.appendChild(t3);
