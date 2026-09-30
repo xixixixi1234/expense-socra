@@ -108,8 +108,13 @@
   .bubble .imgwrap { margin-top:4px; }
   .bubble .imgwrap img { max-width:220px; max-height:220px; border-radius:12px; border:1px solid rgba(255,255,255,.4); cursor:zoom-in; display:block; }
   .bubble .fileline { display:flex; align-items:center; gap:8px; font-size:14px; }
-  #bold-tool { position:fixed; z-index:60; display:none; background:#0f172a; color:#fff; border:none; border-radius:8px; padding:6px 12px; font-size:15px; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,.25); }
-  #bold-tool:hover { background:#1e293b; }
+  [contenteditable="true"]:focus { outline:none; }
+  .field label[contenteditable], table th[contenteditable] { cursor:text; }
+  #sel-toolbar { position:fixed; z-index:60; display:none; gap:2px; background:#0f172a; border-radius:8px; padding:4px; box-shadow:0 4px 12px rgba(0,0,0,.25); }
+  #sel-toolbar.show { display:flex; }
+  #sel-toolbar button { background:transparent; color:#fff; border:none; border-radius:5px; padding:6px 10px; font-size:15px; cursor:pointer; min-width:32px; }
+  #sel-toolbar button:hover { background:#334155; }
+  #sel-toolbar button.hl { color:#fde047; }
   #claim-switcher { position:fixed; right:0; top:50%; transform:translateY(-50%); z-index:70; display:flex; flex-direction:column; gap:6px; background:rgba(15,23,42,.9); padding:10px 8px; border-radius:12px 0 0 12px; }
   #claim-switcher .cs-title { color:#94a3b8; font-size:10px; text-align:center; margin-bottom:2px; }
   #claim-switcher button { border:none; background:#334155; color:#fff; width:64px; padding:8px 6px; border-radius:8px; font-size:12px; cursor:pointer; font-weight:600; }
@@ -167,15 +172,15 @@
     <div class="card">
       <h2><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span>Claim Summary</h2>
       <div class="fields">
-        <div class="field"><label>Employee</label><div class="val" id="c-employee" contenteditable data-key="employee">-</div></div>
-        <div class="field"><label>Claim ID</label><div class="val" id="c-claimId" contenteditable data-key="claimId">-</div></div>
-        <div class="field"><label>Department</label><div class="val" id="c-department" contenteditable data-key="department">-</div></div>
-        <div class="field"><label>Claim Date</label><div class="val" id="c-invoiceDate" contenteditable data-key="invoiceDate">-</div></div>
-        <div class="field"><label>Trip Purpose</label><div class="val" id="c-tripPurpose" contenteditable data-key="tripPurpose">-</div></div>
-        <div class="field"><label>Trip Dates</label><div class="val" id="c-tripDates" contenteditable data-key="tripDates">-</div></div>
-        <div class="field"><label>Destination</label><div class="val" id="c-destination" contenteditable data-key="destination">-</div></div>
-        <div class="field"><label>Submitted</label><div class="val" id="c-submitted" contenteditable data-key="submitted">-</div></div>
-        <div class="field"><label>Manager Pre-Approval</label>
+        <div class="field"><label contenteditable="true" spellcheck="false">Employee</label><div class="val" id="c-employee" contenteditable data-key="employee">-</div></div>
+        <div class="field"><label contenteditable="true" spellcheck="false">Claim ID</label><div class="val" id="c-claimId" contenteditable data-key="claimId">-</div></div>
+        <div class="field"><label contenteditable="true" spellcheck="false">Department</label><div class="val" id="c-department" contenteditable data-key="department">-</div></div>
+        <div class="field"><label contenteditable="true" spellcheck="false">Claim Date</label><div class="val" id="c-invoiceDate" contenteditable data-key="invoiceDate">-</div></div>
+        <div class="field"><label contenteditable="true" spellcheck="false">Trip Purpose</label><div class="val" id="c-tripPurpose" contenteditable data-key="tripPurpose">-</div></div>
+        <div class="field"><label contenteditable="true" spellcheck="false">Trip Dates</label><div class="val" id="c-tripDates" contenteditable data-key="tripDates">-</div></div>
+        <div class="field"><label contenteditable="true" spellcheck="false">Destination</label><div class="val" id="c-destination" contenteditable data-key="destination">-</div></div>
+        <div class="field"><label contenteditable="true" spellcheck="false">Submitted</label><div class="val" id="c-submitted" contenteditable data-key="submitted">-</div></div>
+        <div class="field"><label contenteditable="true" spellcheck="false">Manager Pre-Approval</label>
           <div class="mgr-badge no" id="c-managerApproval" data-val="No" title="Click to toggle">
             <span class="ic"></span><span class="mgr-text">No</span>
           </div>
@@ -185,7 +190,7 @@
       <div class="divider"></div>
 
       <h2 class="sub"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></span>Expense Items</h2>
-      <table><thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Amount</th></tr></thead>
+      <table><thead><tr><th contenteditable="true" spellcheck="false">Date</th><th contenteditable="true" spellcheck="false">Category</th><th contenteditable="true" spellcheck="false">Description</th><th contenteditable="true" spellcheck="false">Amount</th></tr></thead>
         <tbody>
           <tr><td id="c-itemDate" contenteditable data-key="tripDates">-</td><td id="c-category" contenteditable data-key="category">-</td><td id="c-description" contenteditable data-key="description">-</td><td id="c-amount" contenteditable data-key="total">-</td></tr>
           <tr class="total"><td colspan="3">Total</td><td id="c-total">-</td></tr>
@@ -224,11 +229,16 @@
 </div>
 
 <div class="modal" id="modal"><button class="close" id="modal-close">&times;</button><img id="modal-img" src="" /></div>
-<button id="bold-tool" title="Bold selected text">B</button>
+<div id="sel-toolbar">
+  <button data-cmd="bold" title="Bold" style="font-weight:700">B</button>
+  <button data-cmd="italic" title="Italic" style="font-style:italic">I</button>
+  <button data-cmd="underline" title="Underline" style="text-decoration:underline">U</button>
+  <button data-cmd="hilite" class="hl" title="Highlight">H</button>
+</div>
 <div id="claim-switcher"><div class="cs-title">CLAIM</div></div>
 <div id="style-panel">
   <div class="sp-title">TEXT STYLE</div>
-  <div class="sp-fontrow"><label>Size</label><input type="number" id="sp-size" min="10" max="40" step="1" value="19" /><span style="color:#cbd5e1;font-size:11px">px</span></div>
+  <div class="sp-fontrow"><label contenteditable="true" spellcheck="false">Size</label><input type="number" id="sp-size" min="10" max="40" step="1" value="19" /><span style="color:#cbd5e1;font-size:11px">px</span></div>
   <div class="sp-title" style="margin-top:2px">All text</div>
   <div class="sp-row">
     <button id="sp-b" title="Bold all">B</button>
@@ -428,30 +438,38 @@ function handleFiles(fileList){
   });
 }
 
-// Select text inside a chat bubble -> show floating Bold button
-var boldTool=document.getElementById("bold-tool");
+// Word-style selection toolbar: select text in any editable area -> B / I / U / Highlight
+var selToolbar=document.getElementById("sel-toolbar");
 var lastRange=null;
 document.addEventListener("selectionchange",function(){
   var sel=window.getSelection();
-  if(!sel||sel.isCollapsed||!sel.rangeCount){ boldTool.style.display="none"; return; }
+  if(!sel||sel.isCollapsed||!sel.rangeCount){ selToolbar.classList.remove("show"); return; }
   var range=sel.getRangeAt(0);
   var node=range.commonAncestorContainer;
   var el=(node.nodeType===3)?node.parentElement:node;
-  var bubble=el && el.closest ? el.closest(".bubble") : null;
   var editable = el && el.closest ? el.closest("[contenteditable='true']") : null;
-  if(bubble && editable){
+  if(editable){
     var rect=range.getBoundingClientRect();
-    boldTool.style.display="block";
-    boldTool.style.left=(rect.left+rect.width/2-16)+"px";
-    boldTool.style.top=(rect.top-40)+"px";
+    selToolbar.classList.add("show");
+    var tbw=selToolbar.offsetWidth||150;
+    selToolbar.style.left=Math.max(4,(rect.left+rect.width/2-tbw/2))+"px";
+    selToolbar.style.top=Math.max(4,(rect.top-44))+"px";
     lastRange=range;
-  } else { boldTool.style.display="none"; }
+  } else { selToolbar.classList.remove("show"); }
 });
-boldTool.addEventListener("mousedown",function(e){
-  e.preventDefault();
-  if(lastRange){ var sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(lastRange); }
-  document.execCommand("bold");
-  boldTool.style.display="none";
+selToolbar.querySelectorAll("button").forEach(function(btn){
+  btn.addEventListener("mousedown",function(e){
+    e.preventDefault();
+    if(lastRange){ var sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(lastRange); }
+    var cmd=btn.getAttribute("data-cmd");
+    if(cmd==="hilite"){
+      // toggle yellow highlight on the selection
+      document.execCommand("hiliteColor", false, "#fff3a0");
+    } else {
+      document.execCommand(cmd);
+    }
+    // keep toolbar until selection clears
+  });
 });
 
 // init: load current config
