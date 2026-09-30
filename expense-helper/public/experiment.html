@@ -6,8 +6,23 @@
 <title>ExpenseHelper - AI Audit Assistant</title>
 <style>
   :root { --blue:#2563eb; --blue-dark:#1d4ed8; --blue-soft:#eff4ff; --green:#15803d; --red:#dc2626; --text:#0f172a; --muted:#64748b; --border:#e2e8f0; --bg:#f1f5f9; --card:#fff; --scale:1; --wt:400; --wt-strong:700; }
-  /* Global bold toggle: when body.allbold is on, force everything bold */
-  body.allbold, body.allbold .field label, body.allbold .field .val, body.allbold table th, body.allbold table td, body.allbold .bubble, body.allbold .crumb .path, body.allbold .card h2 { font-weight:700 !important; }
+  /* Global text-style toggles (applied to readable text) */
+  body.allbold .field label, body.allbold .field .val, body.allbold table th, body.allbold table td, body.allbold .bubble, body.allbold .crumb .path, body.allbold .card h2, body.allbold .mgr-badge { font-weight:700 !important; }
+  body.allitalic .field label, body.allitalic .field .val, body.allitalic table th, body.allitalic table td, body.allitalic .bubble, body.allitalic .crumb .path { font-style:italic !important; }
+  body.allunderline .field label, body.allunderline .field .val, body.allunderline table th, body.allunderline table td, body.allunderline .bubble, body.allunderline .crumb .path { text-decoration:underline !important; text-underline-offset:3px; }
+  /* Gray-label-only toggles (Employee, Claim ID, ... + table headers) */
+  body.labelbold .field label, body.labelbold table th { font-weight:700 !important; }
+  body.labelitalic .field label, body.labelitalic table th { font-style:italic !important; }
+  body.labelunderline .field label, body.labelunderline table th { text-decoration:underline !important; text-underline-offset:3px; }
+  #style-panel { position:fixed; right:0; bottom:16px; z-index:71; background:rgba(15,23,42,.92); padding:12px 10px; border-radius:12px 0 0 12px; display:flex; flex-direction:column; gap:6px; width:150px; }
+  #style-panel .sp-title { color:#94a3b8; font-size:11px; text-align:center; }
+  #style-panel .sp-row { display:flex; gap:4px; }
+  #style-panel button { flex:1; border:none; background:#334155; color:#fff; padding:7px 4px; border-radius:6px; font-size:13px; cursor:pointer; font-weight:600; }
+  #style-panel button.active { background:#2563eb; }
+  #style-panel button:hover { filter:brightness(1.1); }
+  #style-panel .sp-fontrow { display:flex; align-items:center; gap:4px; }
+  #style-panel .sp-fontrow label { color:#cbd5e1; font-size:11px; }
+  #style-panel input[type=number] { width:56px; border:none; border-radius:6px; padding:6px; font-size:13px; text-align:center; }
   * { box-sizing:border-box; margin:0; padding:0; }
   body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
   svg { display:block; }
@@ -211,6 +226,22 @@
 <div class="modal" id="modal"><button class="close" id="modal-close">&times;</button><img id="modal-img" src="" /></div>
 <button id="bold-tool" title="Bold selected text">B</button>
 <div id="claim-switcher"><div class="cs-title">CLAIM</div></div>
+<div id="style-panel">
+  <div class="sp-title">TEXT STYLE</div>
+  <div class="sp-fontrow"><label>Size</label><input type="number" id="sp-size" min="10" max="40" step="1" value="19" /><span style="color:#cbd5e1;font-size:11px">px</span></div>
+  <div class="sp-title" style="margin-top:2px">All text</div>
+  <div class="sp-row">
+    <button id="sp-b" title="Bold all">B</button>
+    <button id="sp-i" title="Italic all" style="font-style:italic">I</button>
+    <button id="sp-u" title="Underline all" style="text-decoration:underline">U</button>
+  </div>
+  <div class="sp-title" style="margin-top:2px">Gray labels</div>
+  <div class="sp-row">
+    <button id="sp-lb" title="Bold labels">B</button>
+    <button id="sp-li" title="Italic labels" style="font-style:italic">I</button>
+    <button id="sp-lu" title="Underline labels">U</button>
+  </div>
+</div>
 
 <script>
 var PID = sessionStorage.getItem("pid");
@@ -503,6 +534,23 @@ document.addEventListener("keydown",function(e){
   var n=parseInt(e.key,10);
   if(n>=1 && n<=CLAIM_KEYS.length){ loadCurrent(CLAIM_KEYS[n-1]); }
 });
+
+// Text style control panel
+(function(){
+  function toggle(btnId, cls){
+    var b=document.getElementById(btnId); if(!b) return;
+    b.onclick=function(){ var on=document.body.classList.toggle(cls); b.classList.toggle("active",on); };
+  }
+  toggle("sp-b","allbold"); toggle("sp-i","allitalic"); toggle("sp-u","allunderline");
+  toggle("sp-lb","labelbold"); toggle("sp-li","labelitalic"); toggle("sp-lu","labelunderline");
+  var sz=document.getElementById("sp-size");
+  if(sz) sz.addEventListener("input",function(){
+    var v=parseInt(sz.value,10); if(!v||v<8) return;
+    document.documentElement.style.setProperty("--chat-font", v+"px");
+    // also scale info-area proportionally to 19px baseline
+    document.documentElement.style.setProperty("--scale", (v/19).toFixed(3));
+  });
+})();
 </script>
 </body>
 </html>
