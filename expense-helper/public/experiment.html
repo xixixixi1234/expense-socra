@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>ExpenseHelper - AI Audit Assistant</title>
 <style>
-  :root { --blue:#2563eb; --blue-dark:#1d4ed8; --blue-soft:#eff4ff; --green:#15803d; --red:#dc2626; --text:#0f172a; --muted:#64748b; --border:#e2e8f0; --bg:#f1f5f9; --card:#fff; --scale:1; --wt:400; --wt-strong:700; }
+  :root { --blue:#2563eb; --blue-dark:#1d4ed8; --blue-soft:#eff4ff; --green:#15803d; --red:#dc2626; --text:#0f172a; --muted:#64748b; --border:#e2e8f0; --bg:#f1f5f9; --card:#fff; --scale:1; --wt:400; --bubble-w:100%; --wt-strong:700; }
   /* Global text-style toggles (applied to readable text) */
   body.allbold .field label, body.allbold .field .val, body.allbold table th, body.allbold table td, body.allbold .bubble, body.allbold .crumb .path, body.allbold .card h2, body.allbold .mgr-badge { font-weight:700 !important; }
   body.allitalic .field label, body.allitalic .field .val, body.allitalic table th, body.allitalic table td, body.allitalic .bubble, body.allitalic .crumb .path { font-style:italic !important; }
@@ -97,7 +97,7 @@
   .msg-row { display:flex; gap:12px; align-items:flex-start; margin-bottom:4px; }
   .msg-row.user { flex-direction:row-reverse; }
   .msg-avatar { width:40px; height:40px; border-radius:50%; background:#fff; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; flex:none; margin-top:22px; }
-  .msg-col { display:flex; flex-direction:column; max-width:88%; }
+  .msg-col { display:flex; flex-direction:column; flex:1 1 auto; min-width:0; }
   .msg-row.user .msg-col { align-items:flex-end; }
   .msg-time { font-size:calc(13px * var(--scale)); color:var(--muted); margin:0 4px 4px; cursor:text; outline:none; }
   .msg-time:hover { color:var(--text); }
@@ -106,7 +106,7 @@
   .bubble:hover .del-bubble { display:flex; align-items:center; justify-content:center; }
   .bubble.user .del-bubble { background:rgba(255,255,255,.25); color:#fff; }
   .messages { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:14px; padding-right:4px; min-height:440px; }
-  .bubble { max-width:92%; padding:18px 22px; border-radius:16px; font-size:calc(var(--chat-font,19px) * var(--scale)); line-height:1.55; border:1px solid var(--border); background:#fff; white-space:pre-wrap; }
+  .bubble { width:var(--bubble-w,100%); max-width:100%; padding:18px 22px; border-radius:16px; font-size:calc(var(--chat-font,19px) * var(--scale)); line-height:1.55; border:1px solid var(--border); background:#fff; white-space:pre-wrap; box-sizing:border-box; }
   .bubble.user { align-self:flex-end; background:var(--blue); color:#fff; border-color:var(--blue); }
   .bubble.demo-note { font-size:12px; color:var(--muted); border-style:dashed; background:#fafbfc; }
   .bubble.rec { font-weight:700; color:#0f172a; font-size:calc(var(--chat-font,19px) * var(--scale)); }
@@ -607,6 +607,8 @@ document.addEventListener("keydown",function(e){
   }
   toggle("sp-b","allbold"); toggle("sp-i","allitalic"); toggle("sp-u","allunderline");
   toggle("sp-lb","labelbold"); toggle("sp-li","labelitalic"); toggle("sp-lu","labelunderline");
+  var bw=document.getElementById("sp-bw");
+  if(bw) bw.addEventListener("input",function(){ document.documentElement.style.setProperty("--bubble-w", bw.value+"%"); var l=document.getElementById("sp-bwv"); if(l) l.textContent=bw.value+"%"; });
   var sz=document.getElementById("sp-size");
   if(sz) sz.addEventListener("input",function(){
     var v=parseInt(sz.value,10); if(!v||v<8) return;
