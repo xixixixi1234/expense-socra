@@ -14,7 +14,9 @@
   body.labelbold .field label, body.labelbold table th { font-weight:700 !important; }
   body.labelitalic .field label, body.labelitalic table th { font-style:italic !important; }
   body.labelunderline .field label, body.labelunderline table th { text-decoration:underline !important; text-underline-offset:3px; }
-  #style-panel { position:fixed; right:0; bottom:16px; z-index:71; background:rgba(15,23,42,.92); padding:12px 10px; border-radius:12px 0 0 12px; display:flex; flex-direction:column; gap:6px; width:150px; }
+  #ctrl-dock { position:fixed; right:0; top:0; height:100vh; z-index:70; width:166px; overflow-y:auto; background:rgba(15,23,42,.94); padding:14px 10px; border-radius:0; display:flex; flex-direction:column; gap:8px; }
+  #ctrl-dock::-webkit-scrollbar { width:6px; } #ctrl-dock::-webkit-scrollbar-thumb { background:#475569; border-radius:3px; }
+  #style-panel { display:flex; flex-direction:column; gap:6px; border-top:1px solid #334155; padding-top:10px; margin-top:4px; }
   #style-panel .sp-title { color:#94a3b8; font-size:11px; text-align:center; }
   #style-panel .sp-row { display:flex; gap:4px; }
   #style-panel button { flex:1; border:none; background:#334155; color:#fff; padding:7px 4px; border-radius:6px; font-size:13px; cursor:pointer; font-weight:600; }
@@ -100,6 +102,9 @@
   .msg-col { display:flex; flex-direction:column; flex:1 1 auto; min-width:0; }
   .msg-row.user .msg-col { align-items:flex-end; }
   .msg-time { font-size:calc(13px * var(--scale)); color:var(--muted); margin:0 4px 4px; cursor:text; outline:none; }
+  body.notime .msg-time { display:none; }
+  body.notime .msg-row { margin-bottom:2px; }
+  body.notime .msg-avatar { margin-top:0; }
   .msg-time:hover { color:var(--text); }
   .bubble { position:relative; }
   .bubble .del-bubble { position:absolute; top:6px; right:8px; display:none; background:#fee2e2; color:var(--red); border:none; width:22px; height:22px; border-radius:6px; font-size:14px; cursor:pointer; line-height:1; }
@@ -122,7 +127,7 @@
   #sel-toolbar button { background:transparent; color:#fff; border:none; border-radius:5px; padding:6px 10px; font-size:15px; cursor:pointer; min-width:32px; }
   #sel-toolbar button:hover { background:#334155; }
   #sel-toolbar button.hl { color:#fde047; }
-  #claim-switcher { position:fixed; right:0; top:50%; transform:translateY(-50%); z-index:70; display:flex; flex-direction:column; gap:6px; background:rgba(15,23,42,.9); padding:10px 8px; border-radius:12px 0 0 12px; }
+  #claim-switcher { display:flex; flex-direction:column; gap:6px; }
   #claim-switcher .cs-title { color:#94a3b8; font-size:10px; text-align:center; margin-bottom:2px; }
   #claim-switcher button { border:none; background:#334155; color:#fff; width:64px; padding:8px 6px; border-radius:8px; font-size:12px; cursor:pointer; font-weight:600; }
   #claim-switcher button.active { background:#2563eb; }
@@ -235,6 +240,7 @@
   </footer>
 </div>
 
+</div>
 <div class="modal" id="modal"><button class="close" id="modal-close">&times;</button><img id="modal-img" src="" /></div>
 <div id="sel-toolbar">
   <button data-cmd="bold" title="Bold" style="font-weight:700">B</button>
@@ -242,12 +248,14 @@
   <button data-cmd="underline" title="Underline" style="text-decoration:underline">U</button>
   <button data-cmd="hilite" class="hl" title="Highlight">H</button>
 </div>
+<div id="ctrl-dock">
 <div id="claim-switcher"><div class="cs-title">CLAIM</div></div>
 <div id="style-panel">
   <div class="sp-title">TEXT STYLE</div>
   <div class="sp-fontrow"><label contenteditable="true" spellcheck="false">Size</label><input type="number" id="sp-size" min="10" max="40" step="1" value="19" /><span style="color:#cbd5e1;font-size:11px">px</span></div>
   <div class="sp-fontrow"><label>Bubble</label><input type="range" id="sp-bw" min="40" max="100" step="5" value="100" style="width:70px" /><span id="sp-bwv" style="color:#cbd5e1;font-size:11px">100%</span></div>
   <div class="sp-title" style="margin-top:6px">Chat time</div>
+  <button id="sp-timetoggle" class="cs-bold active" style="font-size:13px">Time: on</button>
   <div class="sp-fontrow"><label>Start</label><input type="datetime-local" id="sp-start" step="1" style="width:140px;font-size:11px;border:none;border-radius:6px;padding:4px" /></div>
   <div class="sp-fontrow"><label>Step</label><input type="number" id="sp-step" min="0" max="3600" step="1" value="4" style="width:56px" /><span style="color:#cbd5e1;font-size:11px">sec</span></div>
   <div class="sp-title" style="margin-top:2px">All text</div>
@@ -615,6 +623,12 @@ document.addEventListener("keydown",function(e){
   toggle("sp-lb","labelbold"); toggle("sp-li","labelitalic"); toggle("sp-lu","labelunderline");
   var bw=document.getElementById("sp-bw");
   if(bw) bw.addEventListener("input",function(){ document.documentElement.style.setProperty("--bubble-w", bw.value+"%"); var l=document.getElementById("sp-bwv"); if(l) l.textContent=bw.value+"%"; });
+  var spTimeToggle=document.getElementById("sp-timetoggle");
+  if(spTimeToggle) spTimeToggle.onclick=function(){
+    var off=document.body.classList.toggle("notime");
+    spTimeToggle.textContent=off?"Time: off":"Time: on";
+    spTimeToggle.classList.toggle("active",!off);
+  };
   var spStart=document.getElementById("sp-start");
   var spStep=document.getElementById("sp-step");
   (function(){ function p(n){return (n<10?"0":"")+n;} if(spStart){ spStart.value=CHAT_START.y+"-"+p(CHAT_START.mo+1)+"-"+p(CHAT_START.d)+"T"+p(CHAT_START.h)+":"+p(CHAT_START.mi)+":"+p(CHAT_START.s); } })();
